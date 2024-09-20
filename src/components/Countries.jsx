@@ -89,7 +89,7 @@ const Countries = () => {
                 </Link>
                 <Card.Body className="d-flex flex-column">
                   <Card.Title>{country.name.common}</Card.Title>
-                  <Card.Subtitle classname="mb-5 text-muted">
+                  <Card.Subtitle className="mb-5 text-muted">
                     {country.name.official}
                   </Card.Subtitle>
                   <ListGroup
