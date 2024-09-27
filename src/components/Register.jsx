@@ -1,14 +1,17 @@
-import React, { useState } from "react";
-import { auth, registerWithEmailAndPassword } from "../auth/firebase";
+import { useState } from "react";
+import { Button } from "react-bootstrap";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { auth, registerWithEmailAndPassword } from "../auth/firebase";
+
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
+  // Below handles the auth state from firebase
   const [user, loading, error] = useAuthState(auth);
+
   const navigate = useNavigate();
 
   const handleRegister = () => {
@@ -18,41 +21,27 @@ const Register = () => {
     registerWithEmailAndPassword(name, email, password);
   };
 
-  // TODO: Add a check to if user is logged in and navigate to countries is logged in
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  //TODO: Add a check to see if user is logged in and navigate to countries if logged in
+
   return (
-    <div className="register">
+    <div>
       <input
         type="text"
-        name=""
-        id=""
         value={name}
-        onChange={(e) => {
-          setName(e.target.value);
-        }}
-        placeholder="Full name"
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Full Name"
       />
       <input
         type="email"
-        name=""
-        id=""
         value={email}
-        onChange={(e) => {
-          setEmail(e.target.value);
-        }}
+        onChange={(e) => setEmail(e.target.value)}
         placeholder="Email"
       />
       <input
         type="password"
-        name=""
-        id=""
         value={password}
-        onChange={(e) => {
-          setPassword(e.target.value);
-        }}
-        placeholder="Enter password"
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
       />
       <Button onClick={handleRegister}>Register</Button>
     </div>
@@ -60,5 +49,3 @@ const Register = () => {
 };
 
 export default Register;
-
- 
