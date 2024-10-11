@@ -6,9 +6,8 @@ import {
   clearFavourites,
   getFavouritesFromSource,
 } from "../store/favouritesSlice";
-import CountrySingle from "./CountrySingle";
+import CountryCard from "./CountryCard";
 
-// Favourites to be written
 const Favourites = () => {
   const dispatch = useDispatch();
   let countriesList = useSelector((state) => state.countries.countries);
@@ -65,7 +64,7 @@ const Favourites = () => {
         </Col>
       </Row>
       <Row xs={2} md={3} lg={4} className="g-3">
-        <Button onClick={() => dispatch(clearFavourites())}>
+        <Button variant="danger" onClick={() => dispatch(clearFavourites())}>
           Clear Favourites
         </Button>
       </Row>
@@ -77,7 +76,7 @@ const Favourites = () => {
               .includes(search.toLowerCase());
           })
           .map((country) => (
-            <CountrySingle key={country.name.common} country={country} />
+            <CountryCard key={country.name.common} country={country} showRemoveButton={true} />
           ))}
       </Row>
     </Container>

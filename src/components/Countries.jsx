@@ -6,6 +6,7 @@ import {
   Container,
   Form,
   ListGroup,
+  ListGroupItem,
   Row,
   Spinner,
 } from "react-bootstrap";
@@ -21,9 +22,7 @@ const Countries = () => {
   const countries = useSelector((state) => state.countries.countries);
   const isLoading = useSelector((state) => state.countries.isLoading);
   const searchInput = useSelector((state) => state.countries.search);
-
-  console.log("Countries: ", countries);
-  console.log("isLoading: ", isLoading);
+  const favourites = useSelector((state) => state.favourites.favourites); // Get the favourites from Redux
 
   useEffect(() => {
     dispatch(initializeCountries());
@@ -48,7 +47,7 @@ const Countries = () => {
   return (
     <Container fluid>
       <Row>
-        <Col className="mt-5 d-flex justify-context-center">
+        <Col className="mt-5 d-flex justify-content-center">
           <Form>
             <Form.Control
               style={{ width: "18rem" }}
@@ -68,72 +67,82 @@ const Countries = () => {
               .toLowerCase()
               .includes(searchInput.toLowerCase());
           })
-          .map((country) => (
-            <Col className="mt-5" key={country.name.official}>
-              <Card className="h-100">
-                <Link
-                  to={`/countries/${country.name.common}`}
-                  state={{ country: country }}
-                >
-                  <Card.Img
-                    variant="top"
-                    src={country.flags.svg}
-                    alt={country.name.common}
-                    className="rounded h-50"
-                    style={{
-                      objectFit: "cover",
-                      minHeight: "200px",
-                      maxHeight: "200px",
-                    }}
-                  />
-                </Link>
-                <Card.Body className="d-flex flex-column">
-                  <Card.Title>{country.name.common}</Card.Title>
-                  <Card.Subtitle classname="mb-5 text-muted">
-                    {country.name.official}
-                  </Card.Subtitle>
-                  <ListGroup
-                    variant="flush"
-                    className="flex-grow-1 justify-content-center"
+          .map((country) => {
+            // Check if the country is already a favourite
+            const isFavourite = favourites.includes(country.name.common);
+            return (
+              <Col className="mt-5" key={country.name.official}>
+                <Card className="h-100">
+                  <Link
+                    to={`/countries/${country.name.common}`}
+                    state={{ country: country }}
                   >
-                    <ListGroup.Item>
-                      <i className="bi bi-people me-2">
-                        {country.population.toLocaleString()}
-                      </i>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                      <i className="me-2">
-                        {Object.values(country.currencies || {})
-                          .map((currency) => currency.name)
-                          .join(", ") || "No currency"}
-                      </i>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                      <i className="me-2">
-                        {Object.values(country.languages || {})
-                          .map((language) => language)
-                          .join(", ") || "No currency"}
-                      </i>
-                    </ListGroup.Item>
-                  </ListGroup>
-                  <Button
-                    variant="primary"
-                    onClick={() => dispatch(addFavourite(country.name.common))}
-                  >
-                    Add Favourite
-                  </Button>
-                  <Button
-                    variant="warning"
-                    onClick={() =>
-                      dispatch(removeFavourite(country.name.common))
-                    }
-                  >
-                    Remove Favourite
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
+                    <Card.Img
+                      variant="top"
+                      src={country.flags.svg}
+                      alt={country.name.common}
+                      className="rounded h-50"
+                      style={{
+                        objectFit: "cover",
+                        minHeight: "200px",
+                        maxHeight: "200px",
+                      }}
+                    />
+                  </Link>
+                  <Card.Body className="d-flex flex-column">
+                    <Card.Title>{country.name.common}</Card.Title>
+                    <Card.Subtitle className="mb-5 text-muted">
+                      {country.name.official}
+                    </Card.Subtitle>
+                    <ListGroup
+                      variant="flush"
+                      className="flex-grow-1 justify-content-center"
+                    >
+                      <ListGroupItem>
+                        <i className="bi bi-people me-2">
+                          {country.population.toLocaleString()}
+                        </i>
+                      </ListGroupItem>
+                      <ListGroupItem>
+                        <i className="me-2">
+                          {Object.values(country.currencies || {})
+                            .map((currency) => currency.name)
+                            .join(", ") || "No currency"}
+                        </i>
+                      </ListGroupItem>
+                      <ListGroupItem>
+                        <i className="me-2">
+                          {Object.values(country.languages || {})
+                            .map((language) => language)
+                            .join(", ") || "No language"}
+                        </i>
+                      </ListGroupItem>
+                    </ListGroup>
+                    {/* Conditional rendering based on whether the country is a favourite */}
+                    {!isFavourite ? (
+                      <Button
+                        variant="primary"
+                        onClick={() =>
+                          dispatch(addFavourite(country.name.common))
+                        }
+                      >
+                        Add Favourite
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="success"
+                        onClick={() =>
+                          dispatch(removeFavourite(country.name.common))
+                        }
+                      >
+                        Added Sucessfuly
+                      </Button>
+                    )}
+                  </Card.Body>
+                </Card>
+              </Col>
+            );
+          })}
       </Row>
     </Container>
   );

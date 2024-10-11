@@ -10,6 +10,7 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Layout from "./pages/Layout";
+import 'animate.css/animate.min.css';
 
 const App = () => {
   const [user] = useAuthState(auth);

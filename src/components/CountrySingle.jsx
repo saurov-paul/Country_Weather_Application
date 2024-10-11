@@ -22,7 +22,7 @@ const CountrySingle = (props) => {
         console.log(error);
       })
       .then((response) => {
-        setWeather(response.data);
+        setWeather(response?.data);
         setIsWeatherLoading(false);
       });
   }, [country.capital]);
@@ -54,15 +54,20 @@ const CountrySingle = (props) => {
           <h2>{country.name.common}</h2>
           <h3>{country.capital}</h3>
 
-          <div>
-            <p>
-              Right now it is <strong>{parseInt(weather.main.temp)} </strong>
-              degrees in {country.capital} and {weather.weather[0].description}
-            </p>
-            <Image
-              src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
-            />
-          </div>
+          {weather ? (
+            <div>
+              <p>
+                Right now it is <strong>{parseInt(weather.main.temp)} </strong>
+                degrees in {country.capital} and{" "}
+                {weather.weather[0].description}
+              </p>
+              <Image
+                src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+              />
+            </div>
+          ) : (
+            <div>No weather data found</div>
+          )}
           <Button variant="light" onClick={() => navigate("/countries")}>
             Back to Countries
           </Button>
