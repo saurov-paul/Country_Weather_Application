@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Button, Container, Row, Col, Card, Form } from "react-bootstrap";
+import {
+  Button,
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Alert,
+} from "react-bootstrap";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { auth, registerWithEmailAndPassword } from "../auth/firebase";
@@ -8,16 +16,22 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [error, setError] = useState("");
 
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
+    setError(""); // Reset error state
     if (!name) {
-      alert("Name is required");
+      setError("Name is required");
       return;
     }
-    registerWithEmailAndPassword(name, email, password);
+    try {
+      await registerWithEmailAndPassword(name, email, password);
+    } catch (err) {
+      setError(err.message); // Capture registration errors
+    }
   };
 
   // Check if user is logged in and navigate to countries if logged in
@@ -25,15 +39,25 @@ const Register = () => {
   if (user) navigate("/countries");
 
   return (
-    <Container fluid className="bg-dark text-light p-5" style={{ height: '100vh' }}>
+    <Container
+      fluid
+      className="bg-dark text-light p-5" // Keeping the dark background
+      style={{ height: "100vh" }}
+    >
       <Row className="justify-content-center align-items-center h-100">
         <Col md={6}>
-          <Card className="bg-transparent border-0">
-            <Card.Body className="p-5 bg-light shadow-lg rounded">
-              <Card.Title className="text-center mb-4 display-5 fw-bold">Join Us</Card.Title>
+          <Card className="bg-light shadow-lg rounded">
+            <Card.Body className="p-5"> 
+              <Card.Title className="text-center mb-4 display-5 fw-bold">
+                Join Us
+              </Card.Title>
               <Card.Text className="text-center mb-4">
                 Create an account to explore countries around the world!
               </Card.Text>
+
+              {/* Error Alert */}
+              {error && <Alert variant="danger">{error}</Alert>}
+
               <Form>
                 <Form.Group controlId="formBasicName" className="mb-3">
                   <Form.Label>Full Name</Form.Label>
@@ -71,7 +95,11 @@ const Register = () => {
                   />
                 </Form.Group>
 
-                <Button variant="secondary" onClick={handleRegister} className="w-100 rounded">
+                <Button
+                  variant="secondary"
+                  onClick={handleRegister}
+                  className="w-100 rounded"
+                >
                   Register
                 </Button>
               </Form>
@@ -84,4 +112,3 @@ const Register = () => {
 };
 
 export default Register;
-

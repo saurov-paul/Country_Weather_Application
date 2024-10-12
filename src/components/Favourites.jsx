@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
+import { Button, Col, Container, Form, Row, Spinner, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { initializeCountries } from "../services/countriesServices";
 import {
@@ -10,22 +10,16 @@ import CountryCard from "./CountryCard";
 
 const Favourites = () => {
   const dispatch = useDispatch();
-  let countriesList = useSelector((state) => state.countries.countries);
+  const countriesList = useSelector((state) => state.countries.countries);
   const [search, setSearch] = useState("");
   const countriesLoading = useSelector((state) => state.countries.isLoading);
   const favouritesList = useSelector((state) => state.favourites.favourites);
   const favouritesLoading = useSelector((state) => state.favourites.isLoading);
 
-  console.log("favouritesList: ", favouritesList);
-  console.log("countriesList inside favourites: ", countriesList);
-
-  if (Array.isArray(favouritesList) && favouritesList.length > 0) {
-    countriesList = countriesList.filter((country) =>
-      favouritesList.includes(country.name.common)
-    );
-  } else {
-    countriesList = [];
-  }
+  // Filter the countries based on favourites
+  const filteredCountries = Array.isArray(favouritesList) && favouritesList.length > 0
+    ? countriesList.filter((country) => favouritesList.includes(country.name.common))
+    : [];
 
   useEffect(() => {
     dispatch(initializeCountries());
@@ -51,33 +45,42 @@ const Favourites = () => {
     <Container fluid>
       <Row>
         <Col className="mt-5 d-flex justify-content-center">
-          <Form>
+          <h2>Your Favourite Countries</h2>
+        </Col>
+      </Row>
+      <Row>
+        <Col className="mt-3 d-flex justify-content-center">
+          <Form style={{ width: "300px" }}>
             <Form.Control
-              style={{ width: "18rem" }}
               type="search"
-              className="me-2"
-              placeholder="Search"
+              placeholder="Search by country name"
               aria-label="Search"
               onChange={(e) => setSearch(e.target.value)}
             />
           </Form>
         </Col>
+        <Col className="mt-3 d-flex justify-content-center">
+          <Button variant="danger" onClick={() => dispatch(clearFavourites())}>
+            Clear Favourites
+          </Button>
+        </Col>
       </Row>
-      <Row xs={2} md={3} lg={4} className="g-3">
-        <Button variant="danger" onClick={() => dispatch(clearFavourites())}>
-          Clear Favourites
-        </Button>
-      </Row>
-      <Row xs={2} md={3} lg={4} className="g-3">
-        {countriesList
-          .filter((country) => {
-            return country.name.official
-              .toLowerCase()
-              .includes(search.toLowerCase());
-          })
-          .map((country) => (
-            <CountryCard key={country.name.common} country={country} showRemoveButton={true} />
-          ))}
+      <Row xs={1} md={2} lg={3} className="g-3 mt-4">
+        {filteredCountries.length === 0 ? (
+          <Col className="text-center">
+            <Alert variant="info">
+              No favourite countries found. Please add some!
+            </Alert>
+          </Col>
+        ) : (
+          filteredCountries
+            .filter((country) =>
+              country.name.official.toLowerCase().includes(search.toLowerCase())
+            )
+            .map((country) => (
+              <CountryCard key={country.name.common} country={country} showRemoveButton={true} />
+            ))
+        )}
       </Row>
     </Container>
   );

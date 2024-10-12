@@ -42,7 +42,9 @@ const Layout = () => {
                 {user && (
                   <>
                     <Nav.Item className="me-2">
-                      <span className="text-muted"> Welcome,{user?.name}</span>
+                      <span className="text-muted">
+                        Welcome, {user?.email.split("@")[0] || ""}
+                      </span>
                     </Nav.Item>
                     <Button variant="outline-danger" onClick={logout}>
                       Logout
