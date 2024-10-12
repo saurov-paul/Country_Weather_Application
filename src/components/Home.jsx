@@ -251,6 +251,10 @@ const faqData = [
     question: "3. Is the app available on mobile?",
     answer: "Yes, our app is fully responsive and can be used on any device.",
   },
+  {
+    question: "4. Can I Remove my favourite countries?",
+    answer: "Yes, you can Remove countries from your favourites.",
+  },
 ];
 
 export default Home;
